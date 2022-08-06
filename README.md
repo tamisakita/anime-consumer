@@ -4,6 +4,9 @@ This is the orch consumer component where messages from the first orchestrator a
 
 ![alt text](https://github.com/tamisakita/anime-rest-api/blob/main/arquitetura.JPG "Arquitetura")
 
+[Anime - Api Rest](https://github.com/tamisakita/anime-rest-api)
+[Anime - Orch 1](https://github.com/tamisakita/anime-orquestrador)
+
 ## Project proposal
 Create an API REST to control Anime registration with Spring Boot, hexagonal architecture and Swagger Documentation.
 
