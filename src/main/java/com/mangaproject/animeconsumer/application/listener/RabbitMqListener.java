@@ -13,36 +13,35 @@ import java.util.Arrays;
 @Component
 @Slf4j
 public class RabbitMqListener {
-
     private final RabbitTemplate rabbitTemplate;
 
     private static final String ANIME_RETURN_MESSAGE = "Message received!";
-    private static final String ANIME_EXCHANGE = "animes";
+    private static final String ANIME_EXCHANGE = "amq.direct";
 
     public RabbitMqListener(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    @RabbitListener(queues = {"anime-project"})
+    @RabbitListener(queues = "${spring.rabbitmq.queue}")
     public void receiveSavedAnime(@Payload String message) {
         try {
             AnimeResponseRepresentation anime = JsonUtil.fromJson(message, AnimeResponseRepresentation.class);
-            System.out.println("The anime has been saved " + anime);
+            log.info("The anime was saved: {}", anime);
             rabbitTemplate.convertAndSend(ANIME_EXCHANGE, "anime-out-key", ANIME_RETURN_MESSAGE);
         } catch (Throwable e) {
-            log.error("Could not save the anime", e);
+            log.error("Unable to save anime.", e);
         }
     }
 
-    @RabbitListener(queues ="anime.list")
-    public void receiveListAnime(@Payload String message) {
-        try {
-            AnimeResponseRepresentation[] animes = JsonUtil.fromJson(message, AnimeResponseRepresentation[].class);
-            var animeList = Arrays.asList(animes);
-            System.out.println("All animes has been received " + animeList);
-            rabbitTemplate.convertAndSend(ANIME_EXCHANGE, "anime-out-key", ANIME_RETURN_MESSAGE);
-        } catch (Throwable e) {
-            log.error("Could not find the list of animes", e);
-        }
-    }
+//    @RabbitListener(queues = "${spring.rabbitmq.queue.list}")
+//    public void receiveListAnime(@Payload String message) {
+//        try {
+//            AnimeResponseRepresentation[] animes = JsonUtil.fromJson(message, AnimeResponseRepresentation[].class);
+//            var animeList = Arrays.asList(animes);
+//            log.info("All animes were received: {}", animeList);
+//            rabbitTemplate.convertAndSend(ANIME_EXCHANGE, "anime-out-key", ANIME_RETURN_MESSAGE);
+//        } catch (Throwable e) {
+//            log.error("Unable to find anime list", e);
+//        }
+//    }
 }
